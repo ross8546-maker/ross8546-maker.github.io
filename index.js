@@ -41,3 +41,15 @@ window.addEventListener("scroll", () => {
     alterStyles(isBackToTopRendered);
   }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("contactBtn");
+  const popup = document.getElementById("contactPopup");
+  const close = document.getElementById("popupClose");
+
+  btn.addEventListener("click", () => popup.style.display = "flex");
+  close.addEventListener("click", () => popup.style.display = "none");
+  popup.addEventListener("click", (e) => { 
+    if (e.target === popup) popup.style.display = "none"; 
+  });
+});
