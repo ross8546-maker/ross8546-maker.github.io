@@ -56,7 +56,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+window.addEventListener('touchmove', (e) => {
+  e.preventDefault(); // 화면 스크롤 방지
 
+  const touch = e.touches[0];
+  const x = touch.clientX;
+  const y = touch.clientY;
+
+  // 기존 mousemove 안에서 쓰던 코드 그대로 복붙
+  glow.style.left = x + 'px';
+  glow.style.top = y + 'px';
+
+  if (lastX === null || lastY === null) {
+    lastX = x;
+    lastY = y;
+    return;
+  }
+
+  hue = (hue + 3) % 360;
+
+  ctx.strokeStyle = `hsl(${hue}, 100%, 60%)`;
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(x, y);
+  ctx.stroke();
+
+  lastX = x;
+  lastY = y;
+});
 
 
 
