@@ -56,39 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-function handlePointerMove(e) {
-  const x = e.clientX;
-  const y = e.clientY;
-
-  // 작은 흰색 빛을 커서 위치로 이동
-  glow.style.left = x + 'px';
-  glow.style.top  = y + 'px';
-
-  // 처음 움직일 땐 선 연결 X
-  if (lastX === null || lastY === null) {
-    lastX = x;
-    lastY = y;
-    return;
-  }
-
-  // 무지개 색(0~360도) 순환
-  hue = (hue + 3) % 360;
-
-  ctx.strokeStyle = `hsl(${hue}, 100%, 60%)`;
-  ctx.lineWidth = 5;
-  ctx.lineCap = 'round';
-
-  ctx.beginPath();
-  ctx.moveTo(lastX, lastY);
-  ctx.lineTo(x, y);
-  ctx.stroke();
-
-  lastX = x;
-  lastY = y;
-}
-
-// ✅ 이 한 줄로 PC(마우스) + 모바일(터치/펜) 모두 처리
-window.addEventListener('pointermove', handlePointerMove, { passive: false });
 
 
 

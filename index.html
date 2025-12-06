@@ -256,71 +256,88 @@
 
   <canvas id="trail"></canvas>
   <div id="cursor-glow"></div>
-  <script>
-   const canvas = document.getElementById('trail');
-const ctx = canvas.getContext('2d');
-const glow = document.getElementById('cursor-glow');
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
 
-let points = [];
-let hue = 0;
-const MAX_AGE = 200;   // ms 동안만 꼬리 유지 (200ms 지나면 사라짐)
+ <script>
+  const canvas = document.getElementById('trail');
+  const ctx = canvas.getContext('2d');
+  const glow = document.getElementById('cursor-glow');
 
-window.addEventListener('mousemove', (e) => {
-  const x = e.clientX;
-  const y = e.clientY;
+  function resizeCanvas() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
 
-  glow.style.left = x + 'px';
-  glow.style.top = y + 'px';
+  // 최근 포인터 위치들
+  let points = [];
+  const MAX_AGE = 250; // ms 동안만 꼬리 유지
+  let baseHue = 0;
 
-  const now = performance.now();
-  points.push({ x, y, time: now });
-});
+  // 포인터 이동 공통 처리 (마우스 + 터치 + 펜)
+  function handlePointerMove(e) {
+    const x = e.clientX;
+    const y = e.clientY;
 
-function draw() {
-  const now = performance.now();
+    // glow 위치 이동
+    glow.style.left = x + 'px';
+    glow.style.top  = y + 'px';
 
-  // 오래된 포인트는 리스트에서 제거
-  while (points.length && now - points[0].time > MAX_AGE) {
-    points.shift();
+    const now = performance.now();
+    points.push({ x, y, time: now });
+
+    // 너무 많아지면 오래된 것부터 버리기 (안 버려도 되지만 메모리 아끼기용)
+    if (points.length > 200) {
+      points.splice(0, points.length - 200);
+    }
   }
 
-  // 전체 캔버스 지우고 처음부터 다시 그림
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
+  // pointer 이벤트 하나로 통일 (스크롤은 막지 않음)
+  window.addEventListener('pointermove', handlePointerMove, { passive: true });
 
-  for (let i = 1; i < points.length; i++) {
-    const p0 = points[i - 1];
-    const p1 = points[i];
+  function draw() {
+    const now = performance.now();
 
-    const age = now - p1.time;    
-    const t = 1 - age / MAX_AGE;   
+    // 나이 지난 점 제거
+    points = points.filter(p => now - p.time <= MAX_AGE);
 
-    if (t <= 0) continue;
+    // 캔버스 전체 지우기
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
-    hue = (hue + 3) % 360;
+    // 남아있는 포인트들로 꼬리 그리기
+    for (let i = 1; i < points.length; i++) {
+      const p0 = points[i - 1];
+      const p1 = points[i];
 
-    ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${t})`; 
-    ctx.lineWidth = 8 * t;                  
+      const age = now - p1.time;        // p1이 얼마나 오래됐는지
+      const t   = 1 - age / MAX_AGE;    // 1(새 것) ~ 0(사라지기 직전)
 
-    ctx.beginPath();
-    ctx.moveTo(p0.x, p0.y);
-    ctx.lineTo(p1.x, p1.y);
-    ctx.stroke();
+      if (t <= 0) continue;
+
+      const hue = (baseHue + i * 6) % 360;
+      const alpha = t;          // 오래될수록 투명
+      const width = 2 + 10 * t; // 오래될수록 얇게
+
+      ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${alpha})`;
+      ctx.lineWidth   = width;
+
+      ctx.beginPath();
+      ctx.moveTo(p0.x, p0.y);
+      ctx.lineTo(p1.x, p1.y);
+      ctx.stroke();
+    }
+
+    // 색상 천천히 변화
+    baseHue = (baseHue + 1) % 360;
+
+    requestAnimationFrame(draw);
   }
 
-  requestAnimationFrame(draw);
-}
-draw();
-
-  </script>
+  draw();
+</script>
 
 </body>
 

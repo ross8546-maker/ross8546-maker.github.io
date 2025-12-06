@@ -652,5 +652,20 @@ body:not(.user-is-tabbing) a:focus {
 }
 
 #trail {
-  touch-action: none; /* 터치 스크롤 방지용 */
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* 캔버스는 스크롤/클릭 막지 않게 */
+}
+
+#cursor-glow {
+  position: fixed;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
 }
