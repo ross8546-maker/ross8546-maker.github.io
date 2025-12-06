@@ -300,15 +300,15 @@ function draw() {
     const p0 = points[i - 1];
     const p1 = points[i];
 
-    const age = now - p1.time;          // 이 포인트가 얼마나 오래 됐는지
-    const t = 1 - age / MAX_AGE;        // 1 → 0 으로 줄어듦 (새 것 → 오래된 것)
+    const age = now - p1.time;    
+    const t = 1 - age / MAX_AGE;   
 
     if (t <= 0) continue;
 
     hue = (hue + 3) % 360;
 
-    ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${t})`; // 나이를 알파값에 반영
-    ctx.lineWidth = 8 * t;                             // 오래될수록 얇게
+    ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${t})`; 
+    ctx.lineWidth = 8 * t;                  
 
     ctx.beginPath();
     ctx.moveTo(p0.x, p0.y);
