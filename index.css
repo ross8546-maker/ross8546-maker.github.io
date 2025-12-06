@@ -669,3 +669,10 @@ body:not(.user-is-tabbing) a:focus {
   pointer-events: none;
   transform: translate(-50%, -50%);
 }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: auto;     /* 스크롤 허용 */
+  touch-action: auto; /* 기본 터치 동작 허용 */
+}
