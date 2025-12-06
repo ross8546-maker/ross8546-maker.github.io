@@ -291,7 +291,7 @@ function handlePointerMove(e) {
     const dx = x - last.x;
     const dy = y - last.y;
     const dist = Math.hypot(dx, dy);
-    const step = 10; // 간격(px)
+    const step = 4; // 간격(px)
     const steps = Math.floor(dist / step);
 
     for (let i = 1; i <= steps; i++) {

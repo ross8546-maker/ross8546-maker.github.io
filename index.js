@@ -55,12 +55,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener("touchmove", (e) => {
-  const touch = e.touches[0];
-  handlePointerMove({
-    clientX: touch.clientX,
-    clientY: touch.clientY
-  });
+    const t = e.touches[0];
+    handlePointerMove({ clientX: t.clientX, clientY: t.clientY });
 }, { passive: true });
+
 
 
 
