@@ -276,22 +276,42 @@
   let baseHue = 0;
 
   // 포인터 이동 공통 처리 (마우스 + 터치 + 펜)
-  function handlePointerMove(e) {
-    const x = e.clientX;
-    const y = e.clientY;
+function handlePointerMove(e) {
+  const x = e.clientX;
+  const y = e.clientY;
 
-    // glow 위치 이동
-    glow.style.left = x + 'px';
-    glow.style.top  = y + 'px';
+  glow.style.left = x + 'px';
+  glow.style.top  = y + 'px';
 
-    const now = performance.now();
-    points.push({ x, y, time: now });
+  const now = performance.now();
 
-    // 너무 많아지면 오래된 것부터 버리기 (안 버려도 되지만 메모리 아끼기용)
-    if (points.length > 200) {
-      points.splice(0, points.length - 200);
+  // 바로 이전 포인트와의 사이를 여러 점으로 채워 넣기 (간격 10px 정도)
+  const last = points[points.length - 1];
+  if (last) {
+    const dx = x - last.x;
+    const dy = y - last.y;
+    const dist = Math.hypot(dx, dy);
+    const step = 10; // 간격(px)
+    const steps = Math.floor(dist / step);
+
+    for (let i = 1; i <= steps; i++) {
+      const t = i / (steps + 1);
+      points.push({
+        x: last.x + dx * t,
+        y: last.y + dy * t,
+        time: now
+      });
     }
   }
+
+  // 마지막 실제 포인트도 추가
+  points.push({ x, y, time: now });
+
+  if (points.length > 400) {
+    points.splice(0, points.length - 400);
+  }
+}
+
 
   // pointer 이벤트 하나로 통일 (스크롤은 막지 않음)
   window.addEventListener('pointermove', handlePointerMove, { passive: true });
