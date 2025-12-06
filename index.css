@@ -651,6 +651,9 @@ body:not(.user-is-tabbing) a:focus {
   box-shadow: 0 0 6px rgba(0,0,0,0.25);
 }
 
-#trail {
-  touch-action: none; /* 터치 스크롤 방지용 */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;   /* 페이지 스크롤 막기 */
+  touch-action: none; /* 터치 스크롤/줌 제스처 막기 */
 }
